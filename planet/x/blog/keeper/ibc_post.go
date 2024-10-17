@@ -2,7 +2,7 @@ package keeper
 
 import (
 	"errors"
-	"strconv"
+	
 
 	"planet/x/blog/types"
 
@@ -52,7 +52,7 @@ func (k Keeper) OnRecvIbcPostPacket(ctx sdk.Context, packet channeltypes.Packet,
         },
     )
 
-    packetAck.PostID = strconv.FormatUint(id, 10)
+    packetAck.PostId = id
 
     return packetAck, nil
 }
@@ -77,7 +77,7 @@ func (k Keeper) OnAcknowledgementIbcPostPacket(ctx sdk.Context, packet channelty
             ctx,
             types.SentPost{
                 Creator: data.Creator,
-                PostID:  packetAck.PostID,
+                PostId:  packetAck.PostId,
                 Title:   data.Title,
                 Chain:   packet.DestinationPort + "-" + packet.DestinationChannel,
             },
@@ -91,9 +91,9 @@ func (k Keeper) OnAcknowledgementIbcPostPacket(ctx sdk.Context, packet channelty
 
 // OnTimeoutIbcPostPacket responds to the case where a packet has not been transmitted because of a timeout
 func (k Keeper) OnTimeoutIbcPostPacket(ctx sdk.Context, packet channeltypes.Packet, data types.IbcPostPacketData) error {
-    k.AppendTimedoutPost(
+    k.AppendTimeoutPost(
         ctx,
-        types.TimedoutPost{
+        types.TimeoutPost{
             Creator: data.Creator,
             Title:   data.Title,
             Chain:   packet.DestinationPort + "-" + packet.DestinationChannel,
